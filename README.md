@@ -102,9 +102,9 @@ GET ```/api/notifications```
 Auth: Bearer token
 
 # Issues We Solved Together! 💡
-🛠️ Foreign Key Migration Error: Resolved by adjusting the migration order.
-🔒 Mass Assignment Errors: Solved by adding fields to $fillable in models.
-🧪 Request ID Not Found: Fixed by using the correct request ID when approving requests.
+- 🛠️ Foreign Key Migration Error: Resolved by adjusting the migration order.
+- 🔒 Mass Assignment Errors: Solved by adding fields to $fillable in models.
+- 🧪 Request ID Not Found: Fixed by using the correct request ID when approving requests.
 
 # Testing with Postman 🧪
 - Register a new user via ```/api/register```.
