@@ -20,8 +20,8 @@ Welcome to the **Lab Request System Backend**! This Laravel 11 API allows users 
 
 ### 1. Clone the repository:
 ```bash
-git clone https://github.com/your-repo/lab-request-system-backend.git
-cd lab-request-system-backend
+git clone https://github.com/borinmorm21/backend-lap-request.git
+cd backend-lap-request
 ```
 2. Install dependencies:
 ```bash
