@@ -45,8 +45,8 @@ php artisan db:seed
 php artisan serve
 ```
 
-#API Endpoints 🛠️
-##User Registration:
+# API Endpoints 🛠️
+## User Registration:
 POST ```/api/register```
 Body:
 ```
@@ -58,7 +58,7 @@ Body:
 }
 ```
 
-##User Login:
+## User Login:
 POST ```/api/login```
 Body:
  ```
@@ -87,7 +87,7 @@ Body:
 }
 ```
 
-##Approve Request:
+## Approve Request:
 POST ```/api/requests/{id}/approve```
 Auth: Bearer token
 Body:
@@ -97,16 +97,16 @@ Body:
 }
 ```
 
-##Notifications:
+## Notifications:
 GET ```/api/notifications```
 Auth: Bearer token
 
-#Issues We Solved Together! 💡
+# Issues We Solved Together! 💡
 🛠️ Foreign Key Migration Error: Resolved by adjusting the migration order.
 🔒 Mass Assignment Errors: Solved by adding fields to $fillable in models.
 🧪 Request ID Not Found: Fixed by using the correct request ID when approving requests.
 
-#Testing with Postman 🧪
+# Testing with Postman 🧪
 - Register a new user via ```/api/register```.
 - Login and use the token for authenticated requests.
 - Create and approve lab requests!
