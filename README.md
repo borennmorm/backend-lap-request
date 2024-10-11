@@ -74,17 +74,19 @@ Auth: Bearer token
 Body:
 ```
 {
-    "lab_id": 1,
-    "study_time_id": 2,
-    "user_id": 1,
-    "request_date": "2024-10-12",
-    "major": "IT",
-    "subject": "Data Science",
-    "generation": "2024",
-    "software_need": "Python, R",
-    "number_of_student": 30,
-    "additional": "Need extra projectors"
+  "lab_id": 1,
+  "study_time_id": [1, 2, 3],  
+  "user_id": 1,
+  "request_date": "2024-10-12",
+  "major": "IT",
+  "subject": "Data Science",
+  "generation": "2024",
+  "software_need": "Python, R",
+  "number_of_student": 30,
+  "additional": "Need extra projectors"
 }
+
+
 ```
 
 ## Approve Request:
