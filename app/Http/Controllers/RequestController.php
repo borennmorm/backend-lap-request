@@ -12,7 +12,8 @@ class RequestController extends Controller
         // Validate the incoming request data, including additional fields
         $validatedData = $request->validate([
             'lab_id' => 'required|exists:labs,id',
-            'study_time_id' => 'required|exists:study_times,id',
+            'study_time_id' => 'required|array', // Accept an array of study_time_id
+            'study_time_id.*' => 'exists:study_times,id', // Validate each study_time_id
             'user_id' => 'required|exists:users,id',
             'request_date' => 'required|date',
             'major' => 'required|string|max:100',
@@ -23,22 +24,35 @@ class RequestController extends Controller
             'additional' => 'nullable|string',
         ]);
 
-        // Create a new request with validated data
-        $newRequest = LabRequest::create($validatedData);
+        // Create a new request with the validated data (excluding study_time_id for now)
+        $newRequest = LabRequest::create([
+            'lab_id' => $validatedData['lab_id'],
+            'user_id' => $validatedData['user_id'],
+            'request_date' => $validatedData['request_date'],
+            'major' => $validatedData['major'],
+            'subject' => $validatedData['subject'],
+            'generation' => $validatedData['generation'],
+            'software_need' => $validatedData['software_need'],
+            'number_of_student' => $validatedData['number_of_student'],
+            'additional' => $validatedData['additional'],
+        ]);
 
-        return response()->json($newRequest, 201);
+        // Attach multiple study times to the request using a many-to-many relationship
+        $newRequest->studyTimes()->attach($validatedData['study_time_id']);
+
+        return response()->json($newRequest->load('studyTimes'), 201); // Return request with studyTimes relationship loaded
     }
 
     public function index()
     {
-        // Return all requests with related models (lab, studyTime, user)
-        return LabRequest::with(['lab', 'studyTime', 'user'])->get();
+        // Return all requests with related models (lab, studyTimes, user)
+        return LabRequest::with(['lab', 'studyTimes', 'user'])->get();
     }
 
     public function show($id)
     {
         // Find and return a specific request with related models
-        $request = LabRequest::with(['lab', 'studyTime', 'user'])->findOrFail($id);
+        $request = LabRequest::with(['lab', 'studyTimes', 'user'])->findOrFail($id);
         return response()->json($request);
     }
 
@@ -46,6 +60,7 @@ class RequestController extends Controller
     {
         // Find and delete a request
         $request = LabRequest::findOrFail($id);
+        $request->studyTimes()->detach(); // Detach all related study times
         $request->delete();
 
         return response()->json(null, 204);
