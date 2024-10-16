@@ -23,20 +23,21 @@ Route::middleware('auth:sanctum')->group(function () {
     // Requests resource routes (index, show, store, update, destroy)
     Route::resource('requests', RequestController::class);
 
+    // Labs resource routes (index, show, store, update, destroy)
     Route::resource('labs', LabController::class);
 
     // Study times resource routes (index, show, store, update, destroy)
     Route::resource('study-times', StudyTimeController::class);
 
     // Notifications routes
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::post('/notifications', [NotificationController::class, 'store']);
+    Route::get('/notifications', [NotificationController::class, 'index']); // Retrieve notifications
+    Route::post('/notifications', [NotificationController::class, 'store']); // Send a notification
 
     // Mark a notification as read
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
     // Approval Route
-    Route::post('/requests/{id}/approve', [ApprovalController::class, 'approve']);
+    Route::post('/requests/{id}/approve', [ApprovalController::class, 'approve']); // Approve/reject study times
 
     // Profile Image Update Route
     Route::post('/user/update-profile-image', [UserController::class, 'updateProfileImage']);

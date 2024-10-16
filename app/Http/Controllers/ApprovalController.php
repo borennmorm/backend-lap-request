@@ -3,51 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Request;
-use App\Models\Approval;
+use App\Models\StudyTimeApproval;
 use App\Models\Notification;
 use Illuminate\Http\Request as HttpRequest;
 
 class ApprovalController extends Controller
 {
     /**
-     * Approve or reject a lab request and notify the user.
+     * Approve or reject study times for a lab request.
      */
     public function approve(HttpRequest $request, $id)
     {
-        // Validate the approval request
+        // Validate the incoming approval request
         $data = $request->validate([
-            'is_approve' => 'required|boolean',
+            'study_times' => 'required|array',
+            'study_times.*.study_time_id' => 'required|exists:study_times,id',
+            'study_times.*.is_approved' => 'required|boolean',
         ]);
 
         // Find the lab request
         $labRequest = Request::findOrFail($id);
 
-        // Check if the request has already been approved
-        $existingApproval = Approval::where('request_id', $labRequest->id)->first();
-        if ($existingApproval) {
-            return response()->json(['message' => 'This request has already been reviewed'], 400);
+        // Loop through each study time and approve/reject them individually
+        foreach ($data['study_times'] as $studyTimeApprovalData) {
+            $studyTimeApproval = StudyTimeApproval::updateOrCreate(
+                [
+                    'request_id' => $labRequest->id,
+                    'study_time_id' => $studyTimeApprovalData['study_time_id']
+                ],
+                [
+                    'is_approved' => $studyTimeApprovalData['is_approved']   
+                ]
+            );
+
+            // Prepare a notification message for each study time approval/rejection
+            $message = $studyTimeApprovalData['is_approved']
+                ? "Your lab request for study time ID {$studyTimeApprovalData['study_time_id']} has been approved."
+                : "Your lab request for study time ID {$studyTimeApprovalData['study_time_id']} has been rejected.";
+
+            Notification::create([
+                'user_id' => $labRequest->user_id,
+                'request_id' => $labRequest->id,
+                'message' => $message,
+            ]);
+
         }
 
-        // Create a new approval record
-        $approval = new Approval();
-        $approval->request_id = $labRequest->id;
-        $approval->is_approve = $data['is_approve'];
-        $approval->save();
-
-        // Send notification to the user about the approval/rejection
-        $message = $approval->is_approve
-            ? 'Your lab request has been approved.'
-            : 'Your lab request has been rejected.';
-
-        // Create a notification for the user
-        Notification::create([
-            'user_id' => $labRequest->user_id,  // Assuming user_id is associated with the request
-            'message' => $message,
-        ]);
-
         return response()->json([
-            'message' => 'Request has been ' . ($approval->is_approve ? 'approved' : 'rejected'),
-            'approval' => $approval
+            'message' => 'Study times have been reviewed.',
         ], 200);
     }
 }
