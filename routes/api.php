@@ -23,7 +23,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Requests resource routes (index, show, store, update, destroy)
     Route::resource('requests', RequestController::class);
 
-    // Labs resource routes (index, show, store, update, destroy)
     Route::resource('labs', LabController::class);
 
     // Study times resource routes (index, show, store, update, destroy)
@@ -32,6 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Notifications routes
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications', [NotificationController::class, 'store']);
+
+    // Mark a notification as read
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
     // Approval Route
     Route::post('/requests/{id}/approve', [ApprovalController::class, 'approve']);

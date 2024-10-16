@@ -15,10 +15,27 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
 
-        // Get all notifications for the user
-        $notifications = Notification::where('user_id', $user->id)->get();
+        // Get all unread notifications for the user
+        $notifications = Notification::where('user_id', $user->id)
+                                      ->where('is_read', false)
+                                      ->get();
 
         return response()->json($notifications);
+    }
+
+    /**
+     * Mark a notification as read
+     */
+    public function markAsRead($id)
+    {
+        $user = Auth::user();
+
+        // Find the notification for the user
+        $notification = Notification::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $notification->is_read = true;
+        $notification->save();
+
+        return response()->json(['message' => 'Notification marked as read'], 200);
     }
 
     /**

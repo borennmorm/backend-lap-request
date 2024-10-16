@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lab;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LabController extends Controller
 {
@@ -22,14 +23,18 @@ class LabController extends Controller
     public function store(Request $request)
     {
         // Validate input
-        $data = $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:50',
             'building' => 'nullable|string|max:50',
             'lab_status' => 'required|boolean',
         ]);
 
         // Create new lab
-        $lab = Lab::create($data);
+        $lab = Lab::creat([
+            'name' => $validatedData['name'],
+            'building' => $validatedData['building'],
+            'lab_status' => $validatedData['lab_status'],
+        ]);
 
         return response()->json(['message' => 'Lab created successfully', 'lab' => $lab], 201);
     }
@@ -39,8 +44,12 @@ class LabController extends Controller
      */
     public function show($id)
     {
-        $lab = Lab::findOrFail($id);
-        return response()->json($lab);
+        try {
+            $lab = Lab::findOrFail($id);
+            return response()->json($lab);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Lab not found.'], 404);
+        }
     }
 
     /**
@@ -55,10 +64,14 @@ class LabController extends Controller
             'lab_status' => 'required|boolean',
         ]);
 
-        $lab = Lab::findOrFail($id);
-        $lab->update($data);
+        try {
+            $lab = Lab::findOrFail($id);
+            $lab->update($data);
 
-        return response()->json(['message' => 'Lab updated successfully', 'lab' => $lab]);
+            return response()->json(['message' => 'Lab updated successfully', 'lab' => $lab]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Lab not found.'], 404);  
+        }
     }
 
     /**
@@ -66,9 +79,13 @@ class LabController extends Controller
      */
     public function destroy($id)
     {
-        $lab = Lab::findOrFail($id);
-        $lab->delete();
+        try {
+            $lab = Lab::findOrFail($id);
+            $lab->delete();
 
-        return response()->json(['message' => 'Lab deleted successfully'], 204);
+            return response()->json(['message' => 'Lab deleted successfully'], 204);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Lab not found.'], 404); // Return 404 if lab not found
+        }
     }
 }

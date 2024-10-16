@@ -18,6 +18,8 @@ class UserSeeder extends Seeder
             [
                 'role' => 'admin',
                 'name' => 'Admin User',
+                'email' => 'admin@example.com',
+                'password' => 'password123',
                 'gender' => 'male',
                 'phone' => '1234567890',
                 'department' => 'IT',
@@ -30,6 +32,8 @@ class UserSeeder extends Seeder
             [
                 'role' => 'user',
                 'name' => 'Jane Doe',
+                'email' => 'jane@example.com',
+                'password' => 'password123',
                 'gender' => 'female',
                 'phone' => '0987654321',
                 'department' => 'Business',
@@ -42,6 +46,8 @@ class UserSeeder extends Seeder
             [
                 'role' => 'user',
                 'name' => 'John Smith',
+                'email' => 'john@example.com',
+                'password' => 'password123',
                 'gender' => 'male',
                 'phone' => '5678901234',
                 'department' => 'Engineering',

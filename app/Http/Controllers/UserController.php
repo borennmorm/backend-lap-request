@@ -6,6 +6,7 @@ use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -29,7 +30,7 @@ class UserController extends Controller
 
         // Create the new user
         $user = User::create([
-            'role' => 'user', // You can make this dynamic if needed
+            'role' => 'user',
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
@@ -39,7 +40,7 @@ class UserController extends Controller
             'faculty' => $validatedData['faculty'] ?? null,
             'position' => $validatedData['position'] ?? null,
             'image' => $validatedData['image'] ?? null,
-            'email_verified_at' => now(), // Optionally handle email verification
+            'email_verified_at' => now(),
         ]);
 
         // Create and return access token
@@ -97,15 +98,14 @@ class UserController extends Controller
         // Handle the image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/profiles'), $imageName);
+            $imageName = time() . '_' . md5($image->getClientOriginalName()) . '.' . $image->getClientOriginalExtension();
+
+            // Use storage instead of moving directly to public
+            $imagePath = $image->storeAs('profiles', $imageName, 'public');
 
             // Delete the old image if exists
             if ($user->image) {
-                $oldImagePath = public_path('images/profiles/' . $user->image);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
+                Storage::disk('public')->delete('profiles/' . $user->image);
             }
 
             // Update the user record with the new image
@@ -121,3 +121,4 @@ class UserController extends Controller
         return response()->json(['message' => 'No image uploaded'], 400);
     }
 }
+
