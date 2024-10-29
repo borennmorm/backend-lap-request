@@ -43,11 +43,20 @@ class RequestController extends Controller
         return response()->json($newRequest->load('studyTimes'), 201); // Return request with studyTimes relationship loaded
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Return all requests with related models (lab, studyTimes, user)
-        return LabRequest::with(['lab', 'studyTimes', 'user'])->get();
+        // Filter requests by the logged-in user’s ID or a specific user_id (if passed in the request)
+        $userId = $request->user_id ?? auth()->id();
+
+        // Fetch requests with related lab, studyTimes, and user information
+        $requests = LabRequest::with(['lab', 'studyTimes', 'user'])
+                    ->where('user_id', $userId)
+                    ->get();
+
+        return response()->json($requests);
     }
+
+
 
     public function show($id)
     {

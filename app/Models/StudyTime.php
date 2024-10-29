@@ -9,11 +9,11 @@ class StudyTime extends Model
 {
     use HasFactory;
 
-    protected $table = 'study_times';  
+    protected $table = 'study_times';
 
     public function requests()
     {
-        return $this->belongsToMany(Request::class, 'request_study_time');
+        return $this->belongsToMany(Request::class, 'request_study_time', 'study_time_id', 'request_id');
     }
 
 }

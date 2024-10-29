@@ -32,7 +32,7 @@ class Request extends Model
 
     public function studyTimes()
     {
-        return $this->belongsToMany(StudyTime::class, 'request_study_time');
+        return $this->belongsToMany(StudyTime::class, 'request_study_time', 'request_id');
     }
 
 

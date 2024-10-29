@@ -13,6 +13,9 @@ use App\Http\Controllers\ApprovalController;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
+Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
+
+
 // Route to get authenticated user's information (protected by Sanctum)
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
